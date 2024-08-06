@@ -1,0 +1,36 @@
+# Usage:
+#  put all your .c and .h files in one directory
+#  copy this file into directory and name it Makefile
+#  set 'libs' to list of static library dependencies
+#  set 'tools' to names of output binaries
+#    each binary should have corresponding .c file
+#  run 'make' or 'make <binary>'
+
+tools = 
+libs = 
+cc = clang
+ld = clang
+cflags = 
+lflags = $(patsubst %,-l%,$(libs))
+
+sources = $(wildcard *.c)
+headers = $(wildcard *.h)
+objects = $(patsubst %.c,%.o,$(sources))
+
+main-objects = $(patsubst %,%.o,$(tools))
+filtered-objects = $(filter-out $(main-objects),$(objects))
+
+default: build
+
+clean:
+	rm -fr $(tools) *.o
+
+build: $(tools)
+
+$(tools): %: %.o $(filtered-objects)
+	$(ld) $(lflags) $^ -o $@
+
+$(objects): %.o: %.c $(headers)
+	$(cc) $(cflags) -c $< -o $@
+
+.PHONY: default clean build
