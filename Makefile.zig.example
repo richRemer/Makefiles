@@ -1,0 +1,20 @@
+# Usage:
+#  put all your .zig files
+#  copy this file into directory and name it Makefile
+#  set 'targets' to names of output binaries
+#    each binary should have corresponding .zig file
+#  run 'make' or 'make <target>'
+
+targets = 
+
+default: build
+
+clean:
+	rm -rf $(targets) *.o
+
+build: $(targets)
+
+$(targets): %: %.zig
+	zig build-exe $< -femit-bin=$@
+
+.PHONY: default clean build
